@@ -34,24 +34,32 @@ export const styles = StyleSheet.create({
   containerTexts: {
     marginBottom: 10,
     width: 330,
-    paddingHorizontal: 14
+    paddingHorizontal: 25
   },
   head: {
     flex: 1,
     display: 'flex',
     justifyContent: "center",
   },
-  title: {
-    fontSize: 12,
+  boxTextValues: {
     width: 150,
-    textAlign: 'center',
-    fontWeight: '700',
+    paddingRight: 15
+  },
+  nomeProduto: {
+    fontSize: 16,
+    textAlign: 'right',
+    fontWeight: '900',
     marginTop: 17,
     marginLeft: 10,
-    paddingTop: 15
+  },
+  valorProduto: {
+    fontSize: 16,
+    textAlign: 'right',
+    fontWeight: '900',
+    marginLeft: 10,
   },
   textDefault: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '500'
   },
   ctnData: {
@@ -70,7 +78,7 @@ export const styles = StyleSheet.create({
   data: {
     textAlign: 'center',
     fontSize: 15,
-    fontWeight: 'bold'
+    fontWeight: '900'
   },
   email: {
     textAlign: 'center',
@@ -87,7 +95,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 13,
     width: 500,
-    fontWeight: 'bold',
+    fontWeight: '900',
     maxWidth: '75%'
   },
   gerarQRcode: {
@@ -101,7 +109,7 @@ export const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     padding: 15,
-    fontWeight: "bold"
+    fontWeight: "900"
   },
   inputQuantidade: {
     textAlign: 'center',

@@ -1,5 +1,4 @@
-import { StyleSheet } from "react-native"
-import { Dimensions } from 'react-native';
+import { Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get('window');
 const boxSize = width * 0.6; // 60% da largura da tela, ajuste conforme necessário
@@ -22,7 +21,7 @@ export const styles = StyleSheet.create({
     gap: 20,
   },
   logo: {
-    marginBottom: 10,
+    marginBottom: 0,
     width: 100
   },
   orText: {
@@ -36,7 +35,7 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
   },
   downloadButton: {
-    marginTop: 10,
+    marginTop: 0,
     alignSelf: 'center',
     paddingVertical: 5,
   },
@@ -53,7 +52,7 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: width,
-    height: height + 30,
+    height: height + 60,
   },
   camera: {
     height: '100%',
@@ -73,7 +72,7 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: (height + 60 - boxSize) / 2,
+    height: (height + 120 - boxSize) / 2,
   },
   leftOverlay: {
     top: (height - boxSize) / 2,
@@ -95,25 +94,27 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
-    top: height - 190
+    top: height - 150
   },
   scanQrCodeButton: {
     backgroundColor: '#40c982',
-    height: 45,
-    width: 240,
+    height: 47,
+    width: 220,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
+    borderRadius: 12
   },
   cancelQrCodeButton: {
     height: 45,
-    width: 240,
+    width: 220,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#FFF',
-    borderWidth: 1
+    borderWidth: 1,
+    borderRadius: 12
   },
   cancelQrCodeText: {
     textAlign: 'center',

@@ -1,9 +1,10 @@
-import { createContext, useState, useContext, useEffect } from 'react'
+import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { useAsyncStorage } from '../hooks';
-import type { ReactNode } from 'react'
-import { Alert } from 'react-native'
+import { getUserStorage } from '../storage/storage';
 import { UserStorage } from '../storage/storage.types';
-import { useQrCodeStore } from '../stores'
+import { useVouchersStore } from '../stores';
 
 type AuthContextType = {
   user: UserStorage | null;
@@ -22,26 +23,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<UserStorage | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const qrCodes = useQrCodeStore(state => state.vouchers)
-  let hasSync = !!qrCodes.filter(({ sync }) => !sync).length
+  const vouchers = useVouchersStore(state => state.vouchers)
+  let hasSync = !!vouchers.filter(({ sync }) => !sync).length
 
   const { getItem, removeItem, setItem } = useAsyncStorage()
 
   useEffect(() => {
-    const loadStorageData = async () => {
+    async function loadAppSession() {
       try {
-        const storedUser: UserStorage | null = await getItem('user');
-        
+        // 1. Busca o usuário no disco
+        const storedUser = await getUserStorage();
+
         if (storedUser) {
           setUser(storedUser);
+
+          await useVouchersStore.getState().loadFromStorage();
+
+          useVouchersStore.getState().sync().catch(err => console.log('Sync Back', err));
         }
       } catch (error) {
-        console.log(error);
+        console.log("Erro ao restaurar sessão:", error);
       } finally {
         setIsLoading(false);
       }
-    };
-    loadStorageData();
+    }
+
+    loadAppSession();
   }, []);
 
   const login = async (data: UserStorage) => {
@@ -54,13 +61,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (hasSync && typeLogout == 'soft') {
       Alert.alert(
         "Atenção!",
-        "Você precisa sincronizar os dados antes de sair...",
+        "Você precisa se conectar à internet e sincronizar os dados antes de sair...",
         [{ text: "Entendido" }],
         { cancelable: true }
       )
       return;
     } else if (typeLogout == 'hard') {
       await removeItem('user')
+      await removeItem('produtos')
       setUser(null)
       return;
     }
@@ -73,6 +81,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           text: "Sim",
           onPress: async () => {
             await removeItem('user')
+            await removeItem('produtos')
+            await removeItem('vouchers')
             setUser(null)
           },
         },

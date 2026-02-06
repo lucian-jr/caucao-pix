@@ -1,15 +1,9 @@
-import { useEffect } from "react";
-import { Slot, useRouter, useSegments, useRootNavigationState } from "expo-router";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
+import { Slot, useRootNavigationState, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
 
-import { 
-  useFonts, 
-  Roboto_400Regular, 
-  Roboto_700Bold 
-} from '@expo-google-fonts/roboto';
-import * as SplashScreen from 'expo-splash-screen';
 
-import { Layout as CustomLayout } from "@/src/components/layout/Layout"; 
+import { Layout as CustomLayout } from "@/src/components/layout/Layout";
 
 function InitialLayout() {
   const { user, isLoading } = useAuth();
@@ -52,7 +46,7 @@ function InitialLayout() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider showAlert={() => {}}>
+    <AuthProvider>
       <InitialLayout />
     </AuthProvider>
   );

@@ -1,49 +1,56 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export interface CustomAlertProps {
+type AlertType = 'info' | 'success' | 'error';
+
+interface CustomAlertProps {
   visible: boolean;
-  title: string;
+  onClose: () => void;
+  title?: string;
   message: string;
-  onCancel?: () => void;
-  onConfirm: () => void;
-  confirmText?: string;
-  cancelText?: string;
+  buttonText?: string;
+  type?: AlertType;
 }
 
-export const CustomAlert = ({ 
-  visible, 
-  title, 
-  message, 
-  onCancel, 
-  onConfirm,
-  confirmText = "Sim",
-  cancelText = "Cancelar"
+export const CustomAlert = ({
+  visible,
+  onClose,
+  title = "Atenção",
+  message,
+  buttonText = "Entendido",
+  type = 'info'
 }: CustomAlertProps) => {
-  
+
+  // Define a cor baseada no tipo (Laranja padrão, Vermelho erro, Verde sucesso)
+  const getButtonColor = () => {
+    switch (type) {
+      case 'error': return '#D32F2F';
+      case 'success': return '#388E3C';
+      default: return '#F68C51'; // Sua cor laranja padrão
+    }
+  };
+
   return (
     <Modal
-      transparent
       visible={visible}
+      transparent={true}
       animationType="fade"
-      onRequestClose={onCancel} // Fecha ao clicar no botão voltar do Android
+      onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.alertContainer}>
+        <View style={styles.card}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
+          
+          <Text style={styles.message}>
+            {message}
+          </Text>
 
-          <View style={styles.buttonContainer}>
-            {onCancel && (
-              <TouchableOpacity onPress={onCancel} style={[styles.button, styles.cancelButton]}>
-                <Text style={styles.cancelText}>{cancelText}</Text>
-              </TouchableOpacity>
-            )}
-            
-            <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.confirmButton]}>
-              <Text style={styles.confirmText}>{confirmText}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity 
+            style={[styles.button, { backgroundColor: getButtonColor() }]} 
+            onPress={onClose}
+          >
+            <Text style={styles.buttonText}>{buttonText}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -53,57 +60,46 @@ export const CustomAlert = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo escuro transparente
+    backgroundColor: 'rgba(0,0,0,0.6)', // Fundo escurecido
     justifyContent: 'center',
     alignItems: 'center',
   },
-  alertContainer: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
-    elevation: 5, // Sombra no Android
-    shadowColor: '#000', // Sombra no iOS
+  card: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    elevation: 10, // Sombra Android
+    shadowColor: '#000', // Sombra iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
+    marginBottom: 12,
     color: '#333',
+    textAlign: 'center',
   },
   message: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 20,
     textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginBottom: 24,
+    lineHeight: 22,
   },
   button: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 25,
+    minWidth: 120,
     alignItems: 'center',
-    marginHorizontal: 5,
   },
-  cancelButton: {
-    backgroundColor: '#ddd',
-  },
-  confirmButton: {
-    backgroundColor: '#f68c51', // A cor laranja do seu app
-  },
-  cancelText: {
-    color: '#333',
-    fontWeight: '600',
-  },
-  confirmText: {
-    color: 'white',
+  buttonText: {
+    color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   }
 });

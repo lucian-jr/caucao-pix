@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { TextInput, View, Text, TouchableOpacity } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native";
 
-import { useLogin } from "../src/hooks/useLogin"
-import { Button } from "../src/components"
-import { styles } from "../src/styles/login/styles"
-import { CustomAlert } from '../src/components/';
-import { MaterialIcons } from '@expo/vector-icons'
 import { CameraView } from "expo-camera";
+import { Button } from "../src/components";
+import { CustomAlert } from '../src/components/';
+import { useLogin } from "../src/hooks/useLogin";
+import { styles } from "../src/styles/login/styles";
 
-import Logo from '../assets/images/login.svg'
+import Logo from '../assets/images/login.svg';
 
 
 const Login = () => {
@@ -19,7 +18,7 @@ const Login = () => {
     isLoading,
     openDownloadLink,
     loginQrCode,
-    loginWightQrCode,
+    loginWithQrCode,
     cancelLoginQrCode,
     startScan,
     scanned,
@@ -32,9 +31,8 @@ const Login = () => {
          visible={showAlert}
          title="Ops!"
          message="Usuário ou senha incorretos."
-         confirmText="Tentar Novamente"
-         onConfirm={() => setShowAlert(false)}
-         // onCancel={() => setShowAlert(false)} // Opcional se quiser botão de cancelar
+         buttonText="Tentar Novamente"
+         onClose={() => setShowAlert(false)}
        />
 
       <View style={styles.login}>
@@ -58,7 +56,7 @@ const Login = () => {
         (
           <View style={styles.aroundCam}>
             <CameraView
-              onBarcodeScanned={scanned ? undefined : loginWightQrCode}
+              onBarcodeScanned={scanned ? undefined : loginWithQrCode}
               barcodeScannerSettings={{
                 barcodeTypes: ['qr']
               }}

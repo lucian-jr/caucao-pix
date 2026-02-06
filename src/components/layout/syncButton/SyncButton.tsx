@@ -1,10 +1,10 @@
-import { Animated, TouchableOpacity, View, Text} from "react-native"
-import { useSyncButton } from "./hooks/useSyncButton"
 import { useInterval } from "@/src/hooks"
+import { Animated, TouchableOpacity, View } from "react-native"
+import { useSyncButton } from "./hooks/useSyncButton"
 import { styles } from "./styles"
 
-import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
 import { hasNetwork } from "@/src/utils/net"
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { useEffect } from "react"
 
 interface SyncButtonProps {
@@ -25,12 +25,12 @@ const SyncButton = ({onSyncingChange} : SyncButtonProps) => {
     }
   }, [isSyncing, onSyncingChange]);
   
-  // useInterval(async () => {
-  //   const isConnected = await hasNetwork();
-  //   if (isConnected) {
-  //     sync();
-  //   }
-  // }, 900000);
+  useInterval(async () => {
+    const isConnected = await hasNetwork();
+    if (isConnected) {
+      sync();
+    }
+  }, 60000);
 
   return (
     <TouchableOpacity style={styles.container} onPress={sync}>
@@ -49,3 +49,4 @@ const SyncButton = ({onSyncingChange} : SyncButtonProps) => {
 }
 
 export { SyncButton }
+

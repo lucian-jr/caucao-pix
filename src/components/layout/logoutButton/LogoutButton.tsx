@@ -1,13 +1,12 @@
-import { TouchableOpacity, View, Text } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native";
 
-import { useAuth } from "@/src/context/AuthContext"; 
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { useAuth } from "@/src/context/AuthContext";
 
 const LogOutButton = () => {
   const { logout } = useAuth();
 
   return (
-    <TouchableOpacity onPress={() => logout('')}>
+    <TouchableOpacity onPress={() => logout('soft')}>
         <View>
           <Text style={{fontWeight: 900}}>Sair</Text>
         </View>
@@ -15,4 +14,5 @@ const LogOutButton = () => {
   )
 }
 
-export { LogOutButton }
+export { LogOutButton };
+

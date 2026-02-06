@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import ViewShot from 'react-native-view-shot';
-import { MyQRCode } from "./QrCode";
 import LogoMceBlack from "../../../assets/images/voucher-logo.svg";
-import { styles } from './styles';
 import { formatDBDate } from "../../utils/date.utils";
+import { MyQRCode } from "./QrCode";
+import { styles } from './styles';
 
 interface PrintData {
   nomeProduto: string;
@@ -28,14 +28,14 @@ const PrintVoucherLayout: React.FC<Props> = ({ viewShotRef, data }) => {
 
   return (
     <View>
-      {/* Mantive o posicionamento original do seu código: top: 10000 */}
       <ViewShot ref={viewShotRef} style={{ backgroundColor: 'white', width: '100%', position: 'absolute', top: 10000 }}>
         <View style={styles.container}>
           <View style={{ flexDirection: 'row' }}>
-            <LogoMceBlack width={150} height={100} />
-            <View>
-              <Text style={styles.title}>{data.nomeProduto}</Text>
-              <Text style={styles.title}>R$ {data.valorFormatado}</Text>
+            <LogoMceBlack width={130} height={80} />
+
+            <View style={styles.boxTextValues}>
+              <Text style={styles.nomeProduto}>{data.nomeProduto}</Text>
+              <Text style={styles.valorProduto}>{data.valorFormatado}</Text>
             </View>
 
           </View>
@@ -49,7 +49,7 @@ const PrintVoucherLayout: React.FC<Props> = ({ viewShotRef, data }) => {
           </View>
 
           <View style={{ width: 320, marginBottom: 5 }}>
-            <MyQRCode code={data.codigo} size={270} />
+            <MyQRCode code={data.codigo} size={235} />
           </View>
           <Text style={styles.codigoQr}>{data.codigo}</Text>
 
@@ -79,3 +79,4 @@ const PrintVoucherLayout: React.FC<Props> = ({ viewShotRef, data }) => {
 };
 
 export { PrintVoucherLayout };
+

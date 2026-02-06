@@ -1,23 +1,17 @@
-import { useEffect, useState } from 'react'
-import { Alert, Linking } from 'react-native'
 import { Camera } from "expo-camera";
 import Constants from 'expo-constants';
+import { useEffect, useState } from 'react';
+import { Alert, Linking } from 'react-native';
 
-import { apiAuth } from '../services/api'
-import type { UserStorage } from '../storage/storage.types'
-import { useAuth } from '../context/AuthContext'
-import { useQrCodeStore } from '../stores'
-import { hasNetwork } from "../utils/net"
-import { useAsyncStorage } from './useAsyncStorage'
+import { useAuth } from '../context/AuthContext';
+import { apiAuth } from '../services/api';
+import { useVouchersStore } from '../stores';
+import { hasNetwork } from "../utils/net";
+import { useAsyncStorage } from './useAsyncStorage';
 
 interface LoginData {
   username: string;
   password: string;
-}
-
-interface syncQrCodesResponseData {
-  status: 'success' | 'error';
-  message: string;
 }
 
 const useLogin = () => {
@@ -26,34 +20,11 @@ const useLogin = () => {
   const [useScan, setScan] = useState(true);
   const [scanned, setScanned] = useState(true);
 
-  const { getItem, setItem, removeItem } = useAsyncStorage()
+  const { setItem } = useAsyncStorage()
   const { login } = useAuth()
 
-  const syncQrCodes = useQrCodeStore(state => state.sync)
-
-  const verifyUserIsLogged = async () => {
-    setIsLoading(true)
-    const user: UserStorage | null = await getItem('user')
-
-    if (!user) {
-      setIsLoading(false)
-      return;
-    };
-
-    // const syncQrCodesResponse: syncQrCodesResponseData = await syncQrCodes();
-
-    // if (syncQrCodesResponse.status === 'error') {
-    //   setIsLoading(false)
-
-    //   Alert.alert('Erro', syncQrCodesResponse.message, [{ text: 'Entendi' }])
-
-    //   await removeItem('user')
-    //   return;
-    // }
-
-    user && login(user)
-    setIsLoading(false)
-  }
+  const loadVouchersLocal = useVouchersStore(state => state.loadFromStorage);
+  const syncVouchers = useVouchersStore(state => state.sync);
 
   const openDownloadLink = () => {
     const url = 'https://play.google.com/store/apps/details?id=com.lucian.mcecashless';
@@ -75,12 +46,11 @@ const useLogin = () => {
     setScan(false)
   }
 
-  const loginWightQrCode = async ({ type, data }: { type: string, data: string }) => {
+  const loginWithQrCode = async ({ type, data }: { type: string, data: string }) => {
     setScan(true)
     setScanned(true);
 
     if (data) {
-
       try {
         const dataLogin: LoginData = JSON.parse(data);
 
@@ -108,30 +78,30 @@ const useLogin = () => {
               const { user_id, id_dispositivo, id_evento, nome_evento, data_evento } = response;
 
               const dataUser = {
-                "user_id"         : user_id,
-                "id_dispositivo"  : id_dispositivo,
-                "id_evento"       : id_evento,
-                "nome_evento"     : nome_evento,
-                "data_evento"     : data_evento,
+                "user_id": user_id,
+                "id_dispositivo": id_dispositivo,
+                "id_evento": id_evento,
+                "nome_evento": nome_evento,
+                "data_evento": data_evento,
               }
 
               await setItem('user', dataUser)
 
-              // Tenta sincronizar os QR Codes
-              // const syncQrCodesResponse: syncQrCodesResponseData = await syncQrCodes();
+              if (await hasNetwork()) {
+                console.log("Baixando histórico de vouchers...");
+                
+                try {
+                  await syncVouchers();
+                } catch (err) {
+                  console.error("Erro ao baixar histórico:", err);
+                }
+              }
 
-              // if (syncQrCodesResponse.status == 'error') {
-              //   setIsLoading(false)
+              await loadVouchersLocal();
 
-              //   Alert.alert('Erro', syncQrCodesResponse.message, [{ text: 'Entendi' }])
+              login(dataUser);
 
-              //   // Limpa tudo se a sync falhar
-              //   await removeItem('user')
-
-              //   return;
-              // }
-
-              login(dataUser)
+              setIsLoading(false);
             }
           } catch (error) {
             setIsLoading(false)
@@ -163,7 +133,6 @@ const useLogin = () => {
           const appCurrentVersion = Constants.expoConfig?.version;
 
           if (version && version !== appCurrentVersion) {
-            await setItem('event', '');
             await setItem('user', '');
 
             Alert.alert(
@@ -185,8 +154,6 @@ const useLogin = () => {
           [{ text: 'Entendi' }]
         );
       }
-
-      verifyUserIsLogged();
     };
 
     checkVersionAndLogin();
@@ -196,7 +163,7 @@ const useLogin = () => {
     isLoading,
     openDownloadLink,
     loginQrCode,
-    loginWightQrCode,
+    loginWithQrCode,
     cancelLoginQrCode,
     hasPermission,
     startScan,
@@ -205,4 +172,5 @@ const useLogin = () => {
   }
 }
 
-export { useLogin }
+export { useLogin };
+

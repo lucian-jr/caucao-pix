@@ -1,13 +1,9 @@
-import { useState, useRef, useEffect } from "react"
-import { Alert, Animated } from "react-native"
-import { useAuth } from "@/src/context/AuthContext"
+import { useRef, useState } from "react";
+import { Animated } from "react-native";
 
-import { useAsyncStorage } from "@/src/hooks"
-import { apiAuth } from "@/src/services/api"
-import { UserStorage } from "@/src/storage/storage.types"
 
-import {  useQrCodeStore } from "../../../../stores/vouchersStore"
-import { hasNetwork } from "@/src/utils/net"
+import { hasNetwork } from "@/src/utils/net";
+import { useVouchersStore } from "../../../../stores/vouchersStore";
 
 interface LoginRequest {
   username: string;
@@ -19,11 +15,11 @@ const useSyncButton = () => {
 
   const [spinAnimation] = useState(new Animated.Value(0))
 
-  const qrCodes = useQrCodeStore(state => state.vouchers)
+  const vouchers = useVouchersStore(state => state.vouchers)
 
-  let hasSync = !!qrCodes.filter(({ sync }) => !sync).length
+  let hasSync = !!vouchers.filter(({ sync }) => !sync).length
 
-  const sendStorageDataQrCodes = useQrCodeStore(state => state.sendStorageData)
+  const sendStorageDataVouchers = useVouchersStore(state => state.sendStorageData)
 
   const anim = useRef(Animated.loop(
     Animated.timing(spinAnimation,
@@ -35,9 +31,7 @@ const useSyncButton = () => {
     )
   )).current
 
-  const sync = async () => {
-    // if (isSyncing || !hasSync) return;
-    
+  const sync = async () => { 
     if (isSyncing) return;
 
     anim.start()
@@ -46,7 +40,7 @@ const useSyncButton = () => {
     const hasNet = await hasNetwork()
 
     if (hasNet) {
-      await sendStorageDataQrCodes()
+      await sendStorageDataVouchers()
     } else {
       alert('Sem conexão com a internet');
     }
@@ -68,4 +62,5 @@ const useSyncButton = () => {
   }
 }
 
-export { useSyncButton }
+export { useSyncButton };
+
